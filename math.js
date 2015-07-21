@@ -9,7 +9,7 @@ bracketnum = /\)(\d+)/g,
   pow = /(x|\d|\(.*\))\^(\d)/g;
 // h = ステップ幅　x = 現在のx  nextx = 前のx convergence = 収束幅
 var h, x, convergence = 5,
-  differential,differentialdash, X, Xdash;
+  differential, differentialdash, X, Xdash;
 var output, ansbuf;
 var temp;
 var delete_log = function() {
@@ -58,8 +58,7 @@ var dot_plot = function(x, y) {
   // }
   dot_plot.count++;
   dot(x, y, 'dot');
-  console.log('dot_plot count : ' + dot_plot.count + '  point :' + x + ',' + y);
-  log('dot_plot count : ' + dot_plot.count + '  point :' + x + ',' + y);
+  log('dot_plot count : ' + dot_plot.count + '  point :' + x + ' , ' + y);
   text(x, y, dot_plot.count, 'bottom');
 };
 
@@ -94,7 +93,7 @@ var gradient = function() {
   x = document.getElementById('first').value;
   // step 2
   while (Math.abs(calculate(differential, x)) > convergence) {
-    log('f\'(x) :'+Math.abs(calculate(differential, x)));
+    log('f\'(x) :' + calculate(differential, x));
     if (dot_plot.count > 100) {
       alert('失敗。そろそろやめときます。');
       break;
@@ -102,25 +101,20 @@ var gradient = function() {
     h = Math.abs(h) * Math.sign(calculate(differential, x));
     X = x;
     Xdash = parseFloat(x) + h;
-    //  console.log(Xdash);
     //step 3
     if (calculate(expr, X) < calculate(expr, Xdash)) {
       // (a)
       while (calculate(expr, X) < calculate(expr, Xdash)) {
-        //console.log( 'step3 (a) X: ' + X + ' ' + calculate(expr, X));
         log('step3 (a) h:' + h);
         log('step3 (a) X: ' + X + ' , ' + calculate(expr, X));
-        //console.log( 'step3 (a) X\':' + Xdash + ' ' + calculate(expr,Xdash));
         log('step3 (a) X\':' + Xdash + ' , ' + calculate(expr, Xdash));
         //dot_plot(X, calculate(expr, X));
         h = 2 * h;
-        //      temp = X;
         X = Xdash;
         Xdash = X + h;
       }
       log('step3 (a) h:' + h);
       log('step3 (a) X: ' + X + ' , ' + calculate(expr, X));
-      //console.log( 'step3 (a) X\':' + Xdash + ' ' + calculate(expr,Xdash));
       log('step3 (a) X\':' + Xdash + ' , ' + calculate(expr, Xdash));
       //(b)
       x = X;
@@ -130,19 +124,15 @@ var gradient = function() {
     else {
       // (a)
       while (calculate(expr, X) >= calculate(expr, Xdash)) {
-        //        console.log('step4 (a) X: ' + X + ' ' + calculate(expr, X));
         log('step4 (a) h :' + h);
         log('step4 (a) X: ' + X + ' , ' + calculate(expr, X));
-        //        console.log('step4 (a) X\':'  + Xdash + ' ' + calculate(expr,Xdash));
         log('step4 (a) X\':' + Xdash + ' , ' + calculate(expr, Xdash));
-        //        dot_plot(Xdash, calculate(expr, Xdash));
+        //dot_plot(Xdash, calculate(expr, Xdash));
         h = h / 2;
         Xdash = Xdash - h;
-
       }
       log('step4 (a) h :' + h);
       log('step4 (a) X: ' + X + ' , ' + calculate(expr, X));
-      //        console.log('step4 (a) X\':'  + Xdash + ' ' + calculate(expr,Xdash));
       log('step4 (a) X\':' + Xdash + ' , ' + calculate(expr, Xdash));
       // (b)
       x = Xdash;
@@ -155,8 +145,32 @@ var gradient = function() {
   alert('x = ' + x + ' , y = ' + calculate(expr, x));
 }
 
+var newton = function() {
+  dot_plot.count = 0;
+  //init
+  var plot = document.getElementById('svggraph').commands('plot');
+  convergence = document.getElementById('convergence').value;
+  expr = document.getElementById('expr').value;
+  differential = document.getElementById('differential').value;
+  differentialdash = document.getElementById('differentialdash').value;
+  output = document.getElementById('answer');
+  x = document.getElementById('first').value;
+  while (true) {
+    X = x;
+    x = X - (calculate(differential, X) / calculate(differentialdash, X));
+    log('newton x:' + x);
+    dot_plot(x, calculate(expr, x));
+    plot(calculate(expr,X) + ' + ' + calculate(differential,X)+ '(x -' + X + ')' + '+' + calculate(differentialdash,X)/2 + '(x -' + X + ')^2' );
+    log(calculate(expr,X) + ' + ' + calculate(differential,X)+ '(x -' + X + ')' + '+' + calculate(differentialdash,X)/2 + '(x -' + X + ')^2');
+    log('--------------------------------');
 
-var newton = function(){
-    differential = document.getElementById('differential');
-    differentialdash = document.getElementById('differentialdash' );
+    if (Math.abs(X - x) < convergence) {
+      break;
+    }
+    if(dot_plot.count > 100){
+      alert('失敗?');
+      break;
+    }
+  }
+  alert('x = ' + x + ', y = ' + calculate(expr, x));
 }
