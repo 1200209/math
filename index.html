@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Math graph</title>
+  <script src="expand.js"></script>
+  <script src="SVGGraph.js"></script>
+  <script src="macro.js"></script>
+  <script src="math.js"></script>
+</head>
+
+<body>
+  <div style="float:left;">
+    <svg id="svggraph" width="600px" height="600px" script="
+Macro.drawAxis(-20,20,-200,800,2,200,'black');
+"></svg>
+    <p>
+      f(x)
+      <input type="text" id="expr"></input>
+      <button onclick="start_plot();">plot</button>
+      <br>f'(x)
+      <input type="text" id="differential"></input>
+      <br>初期値x
+      <input type="text" id="first"></input>
+      <br>誤差
+      <input type="text" id="convergence" value="1"></input>
+      <br>初期ステップ幅
+      <input type="text" id="step" value="10"></input>
+      <button onclick="gradient();">勾配法</button>
+    </p>
+    <p>最低横幅
+      <input type="text" id="minx" value="-20"></input>
+      最高横幅
+      <input type="text" id="maxx" value="20"></input>
+    </p>
+    <p>最低縦幅
+      <input type="text" id="miny" value="-200"></input>
+      最高縦幅
+      <input type="text" id="maxy" value="800"></input>
+    </p>
+    <p>
+      横線感覚
+      <input type="text" id="intx" value="2"> 縦線感覚
+      <input type="text" id="inty" value="200">
+    </p>
+    <p>
+      色
+      <input type="text" id="color" value="black">
+      <button onclick="change_color();">色変更</button>
+    </p>
+    <button onclick="clear_plot();">clear</button>
+    <button onclick="delete_log();">log delete</button>
+
+
+  </div>
+  <div>
+    <FORM METHOD="post" onSubmit="calc(); return false;" onReset="document.forms[0].exp.focus()">
+      <DIV>
+        式：
+        <INPUT TYPE="text" NAME="exp" VALUE="" SIZE="70" ACCESSKEY="E">
+        <BR>
+        <INPUT TYPE="submit" VALUE="計算" ACCESSKEY="C">
+        <INPUT TYPE="reset" VALUE="リセット" ACCESSKEY="R">
+        <BR> 答え：
+        <INPUT TYPE="text" NAME="ans" VALUE="" SIZE="70" ACCESSKEY="A">
+      </DIV>
+    </FORM>
+
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+      <!--
+      if (document.all || document.getElementById) {
+        with(document) {
+          writeln('<DIV ID="view">');
+          writeln('<SPAN STYLE="color: #FFFFCC">.<\/SPAN>');
+          writeln('<\/DIV>');
+        }
+      }
+      //-->
+    </SCRIPT>
+  </div>
+  <div id="answer" style="width:800px;height:800px;overflow:scroll;">
+
+  </div>
+
+</body>
+
+</html>
